@@ -1,24 +1,29 @@
-name: Build docker image for devopsjs-test
+name: Build and Push to Docker Hub
 
 on:
   push:
-    branches: ["master"]
+    branches: [ "master" ]
 
 jobs:
-  build:
+  build-and-push:
     runs-on: ubuntu-latest
-
     steps:
-    - name: checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Login to Docker Hub
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Build Docker image
-      run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/devops-js-test:latest .
-    - name: Push docker image
-      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/devops-js-test:latest
+      # New, more robust way to build and push
+      - name: Build and push the Docker image
+        # Define environment variables for this step
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        # Use the environment variables in the script
+        run: |
+          echo "Building image for user: $DOCKER_USERNAME"
+          docker build -t $DOCKER_USERNAME/devops-js-test:latest .
+          docker push $DOCKER_USERNAME/devops-js-test:latest
