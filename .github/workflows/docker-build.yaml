@@ -17,13 +17,9 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # New, more robust way to build and push
-      - name: Build and push the Docker image
-        # Define environment variables for this step
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-        # Use the environment variables in the script
-        run: |
-          echo "Building image for user: $DOCKER_USERNAME"
-          docker build -t $DOCKER_USERNAME/devops-js-test:latest .
-          docker push $DOCKER_USERNAME/devops-js-test:latest
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/devops-js-test:latest
