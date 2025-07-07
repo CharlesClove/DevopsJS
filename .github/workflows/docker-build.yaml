@@ -11,15 +11,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # This is the new step that generates tags and labels
+      - name: Docker meta
+        id: meta # We give this step an ID so we can reference its output
+        uses: docker/metadata-action@v5
+        with:
+          # This is the base name of your image on Docker Hub
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/devops-js-test
+
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      # The build-and-push action now uses the output from the "meta" step
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: '${{ secrets.DOCKERHUB_USERNAME }}/devops-js-test'
+          # These tags and labels are now generated automatically and correctly
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
