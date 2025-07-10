@@ -17,7 +17,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           # IMPORTANT: Replace with your real username below
-          images: clovedockerhub/devops-js-test
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/devops-js-test
 
       - name: Login to Docker Hub
         uses: docker/login-action@v2
