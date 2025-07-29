@@ -1,8 +1,12 @@
-name: Build and Push to Docker Hub (Hardcoded Test)
+name: Build and Push to Docker Hub
 
 on:
   push:
     branches: [ "master" ]
+
+env:
+  REGISTRY: docker.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build-and-push:
@@ -11,13 +15,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # We are temporarily hardcoding your username to prove the theory
-      - name: Docker meta
+      - name: Docker meta craator
         id: meta
         uses: docker/metadata-action@v5
         with:
-          # IMPORTANT: Replace with your real username below
           images: "${{ secrets.DOCKERHUB_USERNAME }}/devops-js-test"
+          tags: |
+            type=sha
 
       - name: Login to Docker Hub
         uses: docker/login-action@v2
